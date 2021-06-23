@@ -10,16 +10,16 @@
 
   <meta property="og:title" content="Stage Route Review" />
   <meta property="og:type" content="book" />
-  
-  
+
+
   <meta property="og:description" content="Stage route analysis, WRC Safari Rally Kenya, 2021" />
-  
+
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Stage Route Review" />
-  
+
   <meta name="twitter:description" content="Stage route analysis, WRC Safari Rally Kenya, 2021" />
-  
+
 
 <meta name="author" content="Tony Hirst" />
 
@@ -28,8 +28,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-  
-  
+
+
 
 <link rel="next" href="shakedown.html"/>
 <script src="libs/header-attrs-2.7/header-attrs.js"></script>
@@ -300,41 +300,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>For a guide to the code used to generate the stage reports, see <a href="https://rallydatajunkie.com/visualising-rally-stages/"><em>Visualising WRC Rally Stages</em></a>.</p>
 <p>See also <a href="https://rallydatajunkie.com/visualising-wrc-rally-results"><em>Visualising WRC Rally Results</em></a>.</p>
 <p><em>This report is unofficial and is not associated in any way with the Fédération Internationale de l’Automobile (FIA) or WRC Promoter GmbH.</em></p>
-
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1" aria-hidden="true" tabindex="-1"></a>max_dist_func <span class="ot">=</span> <span class="cf">function</span>(l, <span class="at">max_distance=</span><span class="fl">0.005</span>){</span>
-<span id="cb1-2"><a href="index.html#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.matrix</span>(l))</span>
-<span id="cb1-3"><a href="index.html#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_linestring</span>(smoothr<span class="sc">::</span><span class="fu">smooth_densify</span>(l, <span class="at">max_distance=</span>max_distance))</span>
-<span id="cb1-4"><a href="index.html#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> </span>
-<span id="cb1-5"><a href="index.html#cb1-5" aria-hidden="true" tabindex="-1"></a>    l</span>
-<span id="cb1-6"><a href="index.html#cb1-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-7"><a href="index.html#cb1-7" aria-hidden="true" tabindex="-1"></a>v_max_dist_func <span class="ot">&lt;-</span> <span class="fu">Vectorize</span>(max_dist_func)</span>
-<span id="cb1-8"><a href="index.html#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="index.html#cb1-9" aria-hidden="true" tabindex="-1"></a>geojson_sf <span class="ot">=</span> geojson_sf <span class="sc">%&gt;%</span> </span>
-<span id="cb1-10"><a href="index.html#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">geometry2 =</span> <span class="fu">v_max_dist_func</span>(geometry))</span>
-<span id="cb1-11"><a href="index.html#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="index.html#cb1-12" aria-hidden="true" tabindex="-1"></a>geojson_sf <span class="ot">=</span> <span class="fu">st_set_geometry</span>(geojson_sf, <span class="fu">st_sfc</span>(geojson_sf<span class="sc">$</span>geometry2)) <span class="sc">%&gt;%</span></span>
-<span id="cb1-13"><a href="index.html#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>geometry2)  <span class="sc">%&gt;%</span>  <span class="fu">st_set_crs</span>(<span class="fu">st_crs</span>(geojson_sf))</span>
-<span id="cb1-14"><a href="index.html#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="index.html#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#geojson_sf2 = geojson_sf %&gt;% max_dist_func(geometry)</span></span>
-<span id="cb1-16"><a href="index.html#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#geojson_sf3 = st_set_geometry(geojson_sf, geojson_sf2)</span></span>
-<span id="cb1-17"><a href="index.html#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#library(purrr)</span></span>
-<span id="cb1-18"><a href="index.html#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#dist_lapply &lt;- lapply(st_geometry(geojson_sf),  max_dist_func)</span></span>
-<span id="cb1-19"><a href="index.html#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">#dist_map    &lt;- purrr::map(st_geometry(geojson_sf), max_dist_func)</span></span>
-<span id="cb1-20"><a href="index.html#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-21"><a href="index.html#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">#resampled_geom = geojson_sf %&gt;%  st_geometry() %&gt;%  max_dist_func()</span></span>
-<span id="cb1-22"><a href="index.html#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">#geojson_sf &lt;- st_set_geometry(geojson_sf, resampled_geom)</span></span>
-<span id="cb1-23"><a href="index.html#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">#length(st_coordinates(sfheaders::sf_linestring(smoothr::smooth_densify(geojson_sf$geometry[[9]], max_distance=0.005))))</span></span>
-<span id="cb1-24"><a href="index.html#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">#length(geojson_sf$geometry[[9]])</span></span>
-<span id="cb1-25"><a href="index.html#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co">#route_index = params$route_index</span></span>
-<span id="cb1-26"><a href="index.html#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="index.html#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&#39;code/sketches.R&#39;</span>)</span></code></pre></div>
-<pre><code>## Error in get(genname, envir = envir) : object &#39;pkgdown_print&#39; not found</code></pre>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="index.html#cb3-1" aria-hidden="true" tabindex="-1"></a>utm_routes <span class="ot">=</span> <span class="fu">get_utm_projection</span>(geojson_sf)</span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="index.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># TO DO - we need to make a statement of surface or conditions</span></span>
-<span id="cb4-2"><a href="index.html#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># to act as a speed modifier</span></span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="index.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Preview available stages</span></span>
-<span id="cb5-2"><a href="index.html#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#geojson_sf[[1]]</span></span></code></pre></div>
-</div>
             </section>
 
           </div>
